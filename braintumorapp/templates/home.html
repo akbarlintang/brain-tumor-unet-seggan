@@ -204,16 +204,37 @@
       <section class="container pt-5 pb-2 pb-md-3 py-lg-5" id="features">
         <div class="row align-items-center my-3 py-md-3 py-lg-5">
           <div class="col-12 col-lg-8 offset-lg-2 order-md-1 pb-md-4">
-            <form action="">
-              <label for="formFile" class="form-label">Masukkan Foto MRI Otak</label>
-              <input class="form-control" type="file" id="formFile">
-            </form>
-            <div class="d-grid mt-4">
-              <a href="#" class="btn btn-primary">
-                Mulai segmentasi
-                <i class="bx bx-right-arrow-alt fs-xl ms-2 me-n1"></i>
-              </a>
-            </div>
+            {% if prediction_image_base64 %}
+              <h2>Segmentation Result:</h2>
+              <img src="data:image/png;base64,{{ prediction_image_base64 }}" alt="Segmentation Result" />
+            {% else %}
+              <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                
+                <div class="mt-4">
+                  <label for="flairFile" class="form-label">Masukkan Citra Fluid Attenuated Inversion Recovery (FLAIR) Otak</label>
+                  <input class="form-control" type="file" id="flairFile" name="flairFile">
+                </div>
+
+                <div class="mt-4">
+                  <label for="ceFile" class="form-label">Masukkan Citra Contrast-Enhanced (CE) Otak</label>
+                  <input class="form-control" type="file" id="ceFile" name="ceFile">
+                </div>
+                
+                <div class="d-grid mt-4">
+                  <button type="submit" class="btn btn-primary">
+                    Mulai segmentasi
+                    <i class="bx bx-right-arrow-alt fs-xl ms-2 me-n1"></i>
+                  </button>
+                </div>
+              </form>
+            {% endif %}
+
+            {% if error %}
+              <div style="color: red;">
+                  {{ error }}
+              </div>
+            {% endif %}
           </div>
         </div>
         <!-- Extra spacing for dark mode only -->
@@ -253,7 +274,6 @@
               }
             }'>
               <div class="swiper-wrapper">
-
                 <!-- Item -->
                 <div class="swiper-slide" data-swiper-tab="#text-1">
                 </div>
@@ -265,11 +285,6 @@
                 <!-- Item -->
                 <div class="swiper-slide" data-swiper-tab="#text-3">
                 </div>
-
-                <!-- Item -->
-                <div class="swiper-slide" data-swiper-tab="#text-4">
-                </div>
-
               </div>
             </div>
           </div>
@@ -294,12 +309,6 @@
               <div id="text-3" class="swiper-tab">
                 <h3 class="h4 pb-1 mb-2">3. Model Segmentasi UNet-SegGan</h3>
                 <p class="mb-0">Model UNet-SegGan yang telah dilatih dengan algoritma SegGan kemudian digunakan sebagai model akhir dalam melakukan segmentasi citra MRI otak.</p>
-              </div>
-
-              <!-- Text 4 -->
-              <div id="text-4" class="swiper-tab">
-                <h3 class="h4 pb-1 mb-2">Step 4. Card-to-card transfers</h3>
-                <p class="mb-0">A sed lorem felis, pulvinar pharetra. At tempus, vel sed faucibus amet sit elementum sed erat. Id nunc blandit pharetra facilisis.</p>
               </div>
             </div>
           </div>
